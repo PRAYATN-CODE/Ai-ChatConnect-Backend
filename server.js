@@ -86,7 +86,7 @@ io.on('connection', socket => {
             socket.broadcast.to(socket.roomId).emit('project-message', data)
             const prompt = message.replace('@ai', ' ')
             const result = await generateResult(prompt)
-            const ai_id = "677456facb1e3cbadd313e6a"
+            const ai_id = "67791c76d97dabde0c511a36"
 
             io.to(socket.roomId).emit('project-message', {
                 message: result,
