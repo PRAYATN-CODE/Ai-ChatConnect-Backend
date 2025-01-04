@@ -86,6 +86,7 @@ io.on('connection', socket => {
             socket.broadcast.to(socket.roomId).emit('project-message', data)
             const prompt = message.replace('@ai', ' ')
             const result = await generateResult(prompt)
+            // const aiuser = await userModel.findOne({ email: 'jarvisai@gmail.com'})
             const ai_id = "67791c76d97dabde0c511a36"
 
             io.to(socket.roomId).emit('project-message', {
