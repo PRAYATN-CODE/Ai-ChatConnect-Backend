@@ -77,3 +77,42 @@ export const getProjectById = async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 }
+
+export const deleteUserFromProjectByAdmin = async (req, res) => {
+    try {
+        const { projectId, userId } = req.body;
+
+        const admin = await userModel.findOne({ email: req.user.email });
+
+        const adminId = admin._id.toString();
+
+        const project = await projectservice.deleteUserFromProject({
+            adminId,
+            userId,
+            projectId
+        });
+
+        return res.status(200).json({ project: project });
+
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+}
+
+export const deleteUserFromProjectByUser = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const admin = await userModel.findOne({ email: req.user.email });
+
+        const adminId = admin._id.toString();
+
+        const project = await projectservice.deleteProjectById({
+            adminId,
+            projectId
+        })
+
+        return res.status(200).json({ project: project });
+    } catch {
+        res.status(500).send({ error: error.message });
+    }
+}

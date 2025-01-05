@@ -15,6 +15,7 @@ export const createProject = async ({ name, userId }) => {
     try {
         project = await projectModel.create({
             name: name,
+            admin: userId,
             users: [userId],
         })
     } catch (error) {
@@ -68,14 +69,24 @@ export const addUserToProject = async ({
         throw new Error('Invalid User ID in User Array')
     }
 
-    const project = await projectModel.findOne({
+    const projectBelong = await projectModel.findOne({
         _id: projectId,
         users: userId
     })
 
-    if (!project) {
+    if (!projectBelong) {
         throw new Error('User Not Belong to this Project')
     }
+
+    const project = await projectModel.findOne({
+        _id: projectId,
+        admin: userId,
+    });
+
+    if (!project) {
+        throw new Error('Only the Project Admin can add users');
+    }
+
 
     const updatedProject = await projectModel.findByIdAndUpdate({
         _id: projectId
@@ -113,4 +124,70 @@ export const getProjectById = async ({ projectId }) => {
     }).populate('users')
 
     return project;
+}
+
+
+export const deleteUserFromProject = async ({ adminId, userId, projectId }) => {
+    try {
+
+        if (!adminId || !userId || !projectId) {
+            throw new Error('Admin ID, User ID, and Project ID are required');
+        }
+
+        const project = await projectModel.findById(projectId);
+
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        console.log(project);
+
+        if (project.admin.toString() !== adminId) {
+            throw new Error('Only the admin can remove users from the project');
+        }
+
+        const updatedProject = await projectModel.findByIdAndUpdate(
+            projectId,
+            { $pull: { users: userId } },
+            { new: true }
+        );
+
+        return updatedProject;
+
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message || 'Failed to remove user from the project',
+        };
+    }
+};
+
+export const deleteProjectById = async ({ adminId, projectId }) => {
+    try {
+        if (!adminId || !projectId) {
+            throw new Error('Admin ID and Project ID are required');
+        }
+
+        const project = await projectModel.findById(projectId);
+
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        if (project.admin.toString() !== adminId) {
+            throw new Error('Only the admin can delete the project');
+        }
+
+        await projectModel.findByIdAndDelete(projectId);
+
+        return {
+            message: 'Project deleted successfully',
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message || 'Failed to delete the project',
+        };
+    }
 }

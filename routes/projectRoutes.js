@@ -22,4 +22,12 @@ router.put('/add-user', authMiddleware.authUser,
 
 router.get("/get-project/:projectId", authMiddleware.authUser, projectController.getProjectById)
 
+router.put('/delete-user', authMiddleware.authUser,
+    body('projectId').isString().withMessage('Project Id is required.'),
+    body('userId').isString().withMessage('userId is required.'),
+    projectController.deleteUserFromProjectByAdmin
+)
+
+router.delete('/delete-project/:projectId', authMiddleware.authUser, projectController.deleteUserFromProjectByUser)
+
 export default router;

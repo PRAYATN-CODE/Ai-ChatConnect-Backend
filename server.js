@@ -65,8 +65,22 @@ io.on('connection', socket => {
 
     socket.on('project-message', async data => {
 
+        const project = await projectModel.findById(socket.roomId)
+
+        const usersArray = Array.isArray(project.users) ? project.users : [project.users];
+        const userId = data.sender._id;
+
+        if (userId && usersArray.includes(userId)) {
+            console.log(`User ${userId} is part of the project.`);
+        } else {
+            console.log(`User ${userId} is NOT part of the project.`);
+            socket.emit("error", "Access Denied: You are not part of this project.");
+            socket.disconnect();
+
+            return;
+        }
+
         const message = data.message;
-        console.log('Message', data);
 
         const storechat = await saveMessage(
             socket.roomId,
@@ -86,7 +100,6 @@ io.on('connection', socket => {
             socket.broadcast.to(socket.roomId).emit('project-message', data)
             const prompt = message.replace('@ai', ' ')
             const result = await generateResult(prompt)
-            // const aiuser = await userModel.findOne({ email: 'jarvisai@gmail.com'})
             const ai_id = "67791c76d97dabde0c511a36"
 
             io.to(socket.roomId).emit('project-message', {
@@ -134,13 +147,13 @@ server.listen(port, () => {
 
 server.on('error', (error) => {
     if (error.code === 'EADDRINUSE') {
-      console.error(`Port ${port} is already in use. Trying a different port...`);
-      const newPort = port + 1; // Increment the port number
-      server.listen(newPort, () => {
-        console.log(`Server is now running on http://localhost:${newPort}`);
-      });
+        console.error(`Port ${port} is already in use. Trying a different port...`);
+        const newPort = port + 1; // Increment the port number
+        server.listen(newPort, () => {
+            console.log(`Server is now running on http://localhost:${newPort}`);
+        });
     } else {
-      console.error("An unexpected error occurred:", error);
-      process.exit(1); // Exit process if the error is not recoverable
+        console.error("An unexpected error occurred:", error);
+        process.exit(1); // Exit process if the error is not recoverable
     }
-  });
+});
