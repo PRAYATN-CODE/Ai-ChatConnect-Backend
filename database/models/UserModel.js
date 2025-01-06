@@ -17,7 +17,11 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         select: false
-    }
+    },
+    profileImage: {
+        type: String,
+        default: '',  
+    },
 })
 
 userSchema.statics.hashPassword = async function (password) {

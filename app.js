@@ -6,6 +6,7 @@ import connect from './database/db.js';
 import aiRoutes from './routes/aiRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
 import executeRoutes from './routes/executeRoutes.js';
+import profileRoutes from './routes/profileRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 
@@ -24,5 +25,6 @@ app.use('/projects', projectRoutes)
 app.use('/ai', aiRoutes)
 app.use('/chat', chatRoutes)
 app.use('/code', executeRoutes)
+app.use('/profile', profileRoutes)
 
 export default app;
