@@ -14,8 +14,9 @@ export const createProjectController = async (req, res) => {
         const { name } = req.body;
         const loggedInUser = await userModel.findOne({ email: req.user.email })
         const userId = loggedInUser._id;
+        const adminName = loggedInUser.name;
 
-        const newProject = await projectservice.createProject({ name, userId });
+        const newProject = await projectservice.createProject({ name, userId, adminName });
         res.status(201).json(newProject);
 
     } catch (error) {

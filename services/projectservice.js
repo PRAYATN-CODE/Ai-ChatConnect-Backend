@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import projectModel from '../database/models/ProjectModel.js';
 
-export const createProject = async ({ name, userId }) => {
+export const createProject = async ({ name, userId, adminName }) => {
 
     if (!name) {
         throw new Error('Name is required', name)
@@ -16,6 +16,7 @@ export const createProject = async ({ name, userId }) => {
         project = await projectModel.create({
             name: name,
             admin: userId,
+            adminName: adminName,
             users: [userId],
         })
     } catch (error) {
