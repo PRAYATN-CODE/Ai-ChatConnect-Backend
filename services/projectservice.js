@@ -192,3 +192,41 @@ export const deleteProjectById = async ({ adminId, projectId }) => {
         };
     }
 }
+
+export const leaveRoom = async ({ userId, projectId }) => {
+    try {
+
+        if (!userId || !projectId) {
+            throw new Error('User ID and Project ID are required');
+        }
+
+        const project = await projectModel.findById(projectId);
+        if (!project) {
+            throw new Error('Project not found');
+        }
+
+        if (!project.users.includes(userId)) {
+            throw new Error('User is not a member of this project');
+        }
+
+        if (project.admin.toString() === userId) {
+            throw new Error('Admin cannot leave the room. They can delete the room if needed');
+        }
+
+        const updatedProject = await projectModel.findByIdAndUpdate(
+            projectId,
+            { $pull: { users: userId } },
+            { new: true }
+        );
+
+        return {
+            message: 'User has successfully left the project',
+            updatedProject: updatedProject
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message || 'Failed to leave the project',
+        };
+    }
+};

@@ -117,3 +117,21 @@ export const deleteUserFromProjectByUser = async (req, res) => {
         res.status(500).send({ error: error.message });
     }
 }
+
+export const LeaveRoomById = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+        const loggedInUser = await userModel.findOne({ email: req.user.email });
+        const userId = loggedInUser._id.toString();
+
+        const project = await projectservice.leaveRoom({
+            userId: userId,
+            projectId
+        })
+
+        return res.status(200).json({ project: project });
+
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+}

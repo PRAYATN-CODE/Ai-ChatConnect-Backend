@@ -30,4 +30,6 @@ router.put('/delete-user', authMiddleware.authUser,
 
 router.delete('/delete-project/:projectId', authMiddleware.authUser, projectController.deleteUserFromProjectByUser)
 
+router.delete('/leave-room/:projectId', authMiddleware.authUser, projectController.LeaveRoomById);
+
 export default router;
