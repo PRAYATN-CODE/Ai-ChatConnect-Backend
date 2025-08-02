@@ -14,7 +14,7 @@ export const uploadProfileImage = async (file) => {
         throw new Error('Image upload failed');
     }
 };
-
+ 
 
 export const updateUserProfileImage = async (userId, imageUrl) => {
     try {

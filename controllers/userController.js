@@ -1,6 +1,5 @@
 import { validationResult } from 'express-validator';
 import userModel from '../database/models/UserModel.js';
-import redisClient from '../services/redisClient.js';
 import * as userService from '../services/userservice.js';
 
 export const createUserController = async (req, res) => {
@@ -71,7 +70,7 @@ export const logOutController = async (req, res) => {
     try {
         const token = req.headers['authorization'] || req.cookies.token;
 
-        await redisClient.set(token, 'logout', { EX: 60 * 60 * 24 });
+        // await redisClient.set(token, 'logout', { EX: 60 * 60 * 24 });
 
         if (!token) {
             return res.status(400).json({ message: 'Token is required' });
